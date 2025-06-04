@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlertSlide - Abrigos</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/shelters.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-shield-alt"></i>
+                <h1>AlertSlide</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Dashboard</a>
+                <a href="alertas.html" class="nav-link">Alertas</a>
+                <a href="abrigos.html" class="nav-link active">Abrigos</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Emergency Button -->
+    <div class="emergency-button" id="emergencyBtn">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>EMERGÊNCIA</span>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page Header -->
+            <section class="page-header">
+                <div class="page-title">
+                    <h1><i class="fas fa-home"></i> Abrigos de Emergência</h1>
+                    <p>Localize e gerencie abrigos disponíveis para situações de emergência</p>
+                </div>
+                <div class="page-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalShelters">0</span>
+                        <span class="stat-label">Total de Abrigos</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="activeShelters">0</span>
+                        <span class="stat-label">Abrigos Ativos</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="availableCapacity">0</span>
+                        <span class="stat-label">Vagas Disponíveis</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="currentOccupancy">0</span>
+                        <span class="stat-label">Pessoas Abrigadas</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="quick-actions">
+                <button class="action-btn" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    Atualizar
+                </button>
+                <button class="action-btn" id="findNearestBtn">
+                    <i class="fas fa-location-arrow"></i>
+                    Abrigo Mais Próximo
+                </button>
+                <button class="action-btn" id="checkInBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Check-in
+                </button>
+                <button class="action-btn" id="checkOutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Check-out
+                </button>
+                <button class="action-btn" id="emergencyActivateBtn">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Ativar Emergência
+                </button>
+            </section>
+
+            <!-- Filters and Map Section -->
+            <section class="content-grid">
+                <!-- Filters -->
+                <div class="filters-panel">
+                    <h3><i class="fas fa-filter"></i> Filtros</h3>
+                    
+                    <div class="filter-group">
+                        <label for="statusFilter">Status:</label>
+                        <select id="statusFilter">
+                            <option value="">Todos</option>
+                            <option value="active">Ativo</option>
+                            <option value="full">Lotado</option>
+                            <option value="inactive">Inativo</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="capacityFilter">Capacidade Mínima:</label>
+                        <input type="number" id="capacityFilter" min="0" placeholder="Ex: 50">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="availabilityFilter">Disponibilidade:</label>
+                        <select id="availabilityFilter">
+                            <option value="">Qualquer</option>
+                            <option value="available">Com Vagas</option>
+                            <option value="low">Poucas Vagas (&lt;20%)</option>
+                            <option value="critical">Crítico (&lt;5%)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="searchFilter">Buscar:</label>
+                        <input type="text" id="searchFilter" placeholder="Nome ou localização...">
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button class="btn-filter" id="applyFilters">Aplicar</button>
+                        <button class="btn-clear" id="clearFilters">Limpar</button>
+                    </div>
+                    
+                    <!-- Emergency Contacts -->
+                    <div class="emergency-contacts">
+                        <h4><i class="fas fa-phone"></i> Contatos de Emergência</h4>
+                        <div class="contact-item">
+                            <span class="contact-name">Bombeiros</span>
+                            <a href="tel:193" class="contact-number">193</a>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-name">Defesa Civil</span>
+                            <a href="tel:199" class="contact-number">199</a>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-name">SAMU</span>
+                            <a href="tel:192" class="contact-number">192</a>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-name">Polícia Militar</span>
+                            <a href="tel:190" class="contact-number">190</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Map -->
+                <div class="map-container">
+                    <div class="map-header">
+                        <h3><i class="fas fa-map-marked-alt"></i> Mapa de Abrigos</h3>
+                        <div class="map-controls">
+                            <button class="map-btn" id="showAllBtn">Mostrar Todos</button>
+                            <button class="map-btn" id="showAvailableBtn">Apenas Disponíveis</button>
+                            <button class="map-btn" id="centerLocationBtn">
+                                <i class="fas fa-crosshairs"></i> Centralizar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="map-wrapper">
+                        <div id="sheltersMap" class="interactive-map">
+                            <!-- Map will be populated by JavaScript -->
+                        </div>
+                        <div class="map-legend">
+                            <div class="legend-item">
+                                <span class="legend-color available"></span>
+                                <span>Disponível</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color full"></span>
+                                <span>Lotado</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color inactive"></span>
+                                <span>Inativo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Shelters List -->
+            <section class="shelters-section">
+                <div class="section-header">
+                    <h2>Lista de Abrigos</h2>
+                    <div class="view-options">
+                        <button class="view-btn active" data-view="cards">
+                            <i class="fas fa-th-large"></i> Cards
+                        </button>
+                        <button class="view-btn" data-view="list">
+                            <i class="fas fa-list"></i> Lista
+                        </button>
+                        <button class="view-btn" data-view="table">
+                            <i class="fas fa-table"></i> Tabela
+                        </button>
+                    </div>
+                </div>
+
+                <div class="shelters-container" id="sheltersContainer">
+                    <!-- Shelters will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Check-in/Check-out Modal -->
+            <div class="modal" id="checkInOutModal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2 id="checkInOutTitle"><i class="fas fa-sign-in-alt"></i> Check-in</h2>
+                    <form id="checkInOutForm">
+                        <div class="form-group">
+                            <label for="shelterSelect">Abrigo:</label>
+                            <select id="shelterSelect" required>
+                                <!-- Options populated by JavaScript -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="personName">Nome Completo:</label>
+                            <input type="text" id="personName" required placeholder="Digite o nome completo">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="personCPF">CPF:</label>
+                            <input type="text" id="personCPF" placeholder="000.000.000-00">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="personPhone">Telefone:</label>
+                            <input type="tel" id="personPhone" placeholder="(00) 00000-0000">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emergencyContact">Contato de Emergência:</label>
+                            <input type="text" id="emergencyContact" placeholder="Nome e telefone">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="specialNeeds">Necessidades Especiais:</label>
+                            <textarea id="specialNeeds" placeholder="Medicamentos, mobilidade reduzida, etc."></textarea>
+                        </div>
+                        
+                        <div class="form-group" id="checkOutReasonGroup" style="display: none;">
+                            <label for="checkOutReason">Motivo do Check-out:</label>
+                            <select id="checkOutReason">
+                                <option value="resolved">Situação Resolvida</option>
+                                <option value="transferred">Transferido para Outro Local</option>
+                                <option value="family">Reunião Familiar</option>
+                                <option value="other">Outro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel" onclick="this.closest('.modal').style.display='none'">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-submit" id="checkInOutSubmit">
+                                <i class="fas fa-sign-in-alt"></i> Confirmar Check-in
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Shelter Details Modal -->
+            <div class="modal" id="shelterDetailsModal">
+                <div class="modal-content large">
+                    <span class="close">&times;</span>
+                    <div id="shelterDetailsContent">
+                        <!-- Content populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Activation Modal -->
+            <div class="modal" id="emergencyActivationModal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2><i class="fas fa-exclamation-triangle"></i> Ativação de Emergência</h2>
+                    <form id="emergencyActivationForm">
+                        <div class="form-group">
+                            <label for="activationArea">Área Afetada:</label>
+                            <input type="text" id="activationArea" required placeholder="Nome da área ou região">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emergencyType">Tipo de Emergência:</label>
+                            <select id="emergencyType" required>
+                                <option value="">Selecione...</option>
+                                <option value="deslizamento">Deslizamento</option>
+                                <option value="inundacao">Inundação</option>
+                                <option value="vendaval">Vendaval</option>
+                                <option value="incendio">Incêndio</option>
+                                <option value="outros">Outros</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="estimatedAffected">Pessoas Afetadas (estimativa):</label>
+                            <input type="number" id="estimatedAffected" min="1" placeholder="Ex: 50">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Abrigos para Ativação:</label>
+                            <div class="shelter-checklist" id="shelterChecklist">
+                                <!-- Populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emergencyNotes">Observações:</label>
+                            <textarea id="emergencyNotes" placeholder="Informações adicionais sobre a situação..."></textarea>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel" onclick="this.closest('.modal').style.display='none'">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-submit emergency">
+                                <i class="fas fa-exclamation-triangle"></i> Ativar Emergência
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Emergency Modal (reused) -->
+            <div class="modal" id="emergencyModal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2><i class="fas fa-exclamation-triangle"></i> Reportar Emergência</h2>
+                    <form id="emergencyForm">
+                        <div class="form-group">
+                            <label for="emergencyTypeReport">Tipo de Emergência:</label>
+                            <select id="emergencyTypeReport" required>
+                                <option value="">Selecione...</option>
+                                <option value="deslizamento">Deslizamento</option>
+                                <option value="inundacao">Inundação</option>
+                                <option value="vendaval">Vendaval</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="emergencyLocationReport">Localização:</label>
+                            <input type="text" id="emergencyLocationReport" placeholder="Digite a localização" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="emergencyDescriptionReport">Descrição:</label>
+                            <textarea id="emergencyDescriptionReport" placeholder="Descreva a situação" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Enviar Alerta</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer">
+        <!-- Notifications will appear here -->
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/shelters.js"></script>
+</body>
+</html>

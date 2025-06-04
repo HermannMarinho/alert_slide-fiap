@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlertSlide - Alertas</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/alerts.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-shield-alt"></i>
+                <h1>AlertSlide</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Dashboard</a>
+                <a href="alertas.html" class="nav-link active">Alertas</a>
+                <a href="abrigos.html" class="nav-link">Abrigos</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Emergency Button -->
+    <div class="emergency-button" id="emergencyBtn">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>EMERGÊNCIA</span>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page Header -->
+            <section class="page-header">
+                <div class="page-title">
+                    <h1><i class="fas fa-bell"></i> Alertas e Notificações</h1>
+                    <p>Monitore todos os alertas de risco em tempo real</p>
+                </div>
+                <div class="page-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalAlerts">0</span>
+                        <span class="stat-label">Total de Alertas</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="activeAlerts">0</span>
+                        <span class="stat-label">Alertas Ativos</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="highRiskAlerts">0</span>
+                        <span class="stat-label">Alto Risco</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label for="riskLevelFilter">Nível de Risco:</label>
+                        <select id="riskLevelFilter">
+                            <option value="">Todos</option>
+                            <option value="ALTO">Alto Risco</option>
+                            <option value="MODERADO">Moderado</option>
+                            <option value="BAIXO">Baixo</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="areaFilter">Área:</label>
+                        <select id="areaFilter">
+                            <option value="">Todas as Áreas</option>
+                            <option value="Morro Azul">Morro Azul</option>
+                            <option value="Vila Nova">Vila Nova</option>
+                            <option value="Centro">Centro</option>
+                            <option value="Encosta Verde">Encosta Verde</option>
+                            <option value="Bairro Alto">Bairro Alto</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateFromFilter">Data Inicial:</label>
+                        <input type="date" id="dateFromFilter">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateToFilter">Data Final:</label>
+                        <input type="date" id="dateToFilter">
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button class="btn-filter" id="applyFilters">
+                            <i class="fas fa-search"></i> Filtrar
+                        </button>
+                        <button class="btn-clear" id="clearFilters">
+                            <i class="fas fa-times"></i> Limpar
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="quick-actions">
+                <button class="action-btn" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    Atualizar
+                </button>
+                <button class="action-btn" id="exportBtn">
+                    <i class="fas fa-download"></i>
+                    Exportar
+                </button>
+                <button class="action-btn" id="reportBtn">
+                    <i class="fas fa-plus"></i>
+                    Novo Relatório
+                </button>
+                <button class="action-btn" id="settingsBtn">
+                    <i class="fas fa-cog"></i>
+                    Configurações
+                </button>
+            </section>
+
+            <!-- Alerts List -->
+            <section class="alerts-section">
+                <div class="section-header">
+                    <h2>Lista de Alertas</h2>
+                    <div class="view-options">
+                        <button class="view-btn active" data-view="list">
+                            <i class="fas fa-list"></i> Lista
+                        </button>
+                        <button class="view-btn" data-view="grid">
+                            <i class="fas fa-th"></i> Grade
+                        </button>
+                        <button class="view-btn" data-view="timeline">
+                            <i class="fas fa-clock"></i> Timeline
+                        </button>
+                    </div>
+                </div>
+
+                <!-- List View -->
+                <div class="alerts-container" id="alertsContainer">
+                    <div class="alerts-list" id="alertsList">
+                        <!-- Alerts will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <button class="page-btn" id="prevPage" disabled>
+                        <i class="fas fa-chevron-left"></i> Anterior
+                    </button>
+                    <div class="page-info">
+                        <span id="pageInfo">Página 1 de 1</span>
+                    </div>
+                    <button class="page-btn" id="nextPage" disabled>
+                        Próximo <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Alert Details Modal -->
+            <div class="modal" id="alertDetailsModal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <div id="alertDetailsContent">
+                        <!-- Alert details will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manual Report Modal -->
+            <div class="modal" id="manualReportModal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2><i class="fas fa-edit"></i> Relatório Manual</h2>
+                    <form id="manualReportForm">
+                        <div class="form-group">
+                            <label for="reportArea">Área Afetada:</label>
+                            <select id="reportArea" required>
+                                <option value="">Selecione a área...</option>
+                                <option value="Morro Azul">Morro Azul</option>
+                                <option value="Vila Nova">Vila Nova</option>
+                                <option value="Centro">Centro</option>
+                                <option value="Encosta Verde">Encosta Verde</option>
+                                <option value="Bairro Alto">Bairro Alto</option>
+                                <option value="Outro">Outro (especificar)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" id="customAreaGroup" style="display: none;">
+                            <label for="customArea">Especificar Área:</label>
+                            <input type="text" id="customArea" placeholder="Digite o nome da área">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reportRiskLevel">Nível de Risco:</label>
+                            <select id="reportRiskLevel" required>
+                                <option value="">Selecione...</option>
+                                <option value="BAIXO">Baixo</option>
+                                <option value="MODERADO">Moderado</option>
+                                <option value="ALTO">Alto</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reportType">Tipo de Ocorrência:</label>
+                            <select id="reportType" required>
+                                <option value="">Selecione...</option>
+                                <option value="deslizamento">Deslizamento</option>
+                                <option value="inundacao">Inundação</option>
+                                <option value="vendaval">Vendaval</option>
+                                <option value="erosao">Erosão</option>
+                                <option value="rachadura">Rachadura no Solo</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reportDescription">Descrição Detalhada:</label>
+                            <textarea id="reportDescription" placeholder="Descreva a situação observada..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reportLocation">Localização Específica:</label>
+                            <input type="text" id="reportLocation" placeholder="Rua, número, referências..." required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reportSeverity">Severidade (1-10):</label>
+                            <input type="range" id="reportSeverity" min="1" max="10" value="5">
+                            <div class="severity-display">
+                                <span>Baixa</span>
+                                <span id="severityValue">5</span>
+                                <span>Alta</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="reportUrgent">
+                                Situação urgente - requer ação imediata
+                            </label>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel" onclick="this.closest('.modal').style.display='none'">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-submit">
+                                <i class="fas fa-paper-plane"></i> Enviar Relatório
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Settings Modal -->
+            <div class="modal" id="settingsModal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2><i class="fas fa-cog"></i> Configurações de Alertas</h2>
+                    <div class="settings-content">
+                        <div class="settings-group">
+                            <h3>Notificações</h3>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="enableSound" checked>
+                                    <span class="setting-label">Sons de notificação</span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="enableBrowser" checked>
+                                    <span class="setting-label">Notificações do navegador</span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="enableEmail">
+                                    <span class="setting-label">Notificações por email</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <h3>Filtros Automáticos</h3>
+                            <div class="setting-item">
+                                <label for="autoRefresh">Atualização automática (segundos):</label>
+                                <select id="autoRefresh">
+                                    <option value="0">Desabilitado</option>
+                                    <option value="5" selected>5 segundos</option>
+                                    <option value="10">10 segundos</option>
+                                    <option value="30">30 segundos</option>
+                                    <option value="60">1 minuto</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label for="alertsPerPage">Alertas por página:</label>
+                                <select id="alertsPerPage">
+                                    <option value="10" selected>10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <h3>Níveis de Prioridade</h3>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="showLowPriority" checked>
+                                    <span class="setting-label">Mostrar alertas de baixo risco</span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="highlightHigh" checked>
+                                    <span class="setting-label">Destacar alertas de alto risco</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-actions">
+                            <button type="button" class="btn-cancel" onclick="this.closest('.modal').style.display='none'">
+                                Cancelar
+                            </button>
+                            <button type="button" class="btn-submit" id="saveSettings">
+                                <i class="fas fa-save"></i> Salvar Configurações
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Emergency Modal (reused from index) -->
+    <div class="modal" id="emergencyModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-exclamation-triangle"></i> Reportar Emergência</h2>
+            <form id="emergencyForm">
+                <div class="form-group">
+                    <label for="emergencyType">Tipo de Emergência:</label>
+                    <select id="emergencyType" required>
+                        <option value="">Selecione...</option>
+                        <option value="deslizamento">Deslizamento</option>
+                        <option value="inundacao">Inundação</option>
+                        <option value="vendaval">Vendaval</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="emergencyLocation">Localização:</label>
+                    <input type="text" id="emergencyLocation" placeholder="Digite a localização" required>
+                </div>
+                <div class="form-group">
+                    <label for="emergencyDescription">Descrição:</label>
+                    <textarea id="emergencyDescription" placeholder="Descreva a situação" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Enviar Alerta</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer">
+        <!-- Notifications will appear here -->
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/alerts.js"></script>
+</body>
+</html>
